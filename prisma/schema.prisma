@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Users {
+  userId Int @id @default(autoincrement()) @map("userId")
+  nickname String @unique @map("nickname")
+  password String @map("password")
+  confirm String @map("confirm")
+  aboutLike String @map("aboutLike")
+
+  Posts Posts[]
+  Comments Comments[]
+
+  @@map("Users")
+}
+
+
+model Posts {
+  postId Int @id @default(autoincrement()) @map("postId")
+  UserId Int @map("UserId")
+  Nickname String @map("Nickname")
+  title String @map("title")
+  content String @db.Text @map("content")
+  likes Int @map("likes")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  Comments Comments[]
+
+  @@map("Posts")
+}
+
+model Comments {
+  commentId Int @id @default(autoincrement()) @map("commentId")
+  UserId Int @map("UserId")
+  PostId Int @map("PostId")
+  Nickname String @map("Nickname")
+  comment String @map("comment")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+
+  User Users @relation(fields: [UserId], references: [userId], onDelete: Cascade)
+  Post Posts @relation(fields: [PostId], references: [postId], onDelete: Cascade)
+
+  @@map("Comments")
+}
