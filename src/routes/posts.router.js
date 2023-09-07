@@ -79,6 +79,7 @@ router.get('/:postId', async(req,res) => {
 
     return res.status(200).json({ post: post });
   } catch (err) {
+    console.log(err.name)
     return res.status(400).json({ errorMessage: '상세 게시글 조회에 실패하였습니다' });
   }
 });
