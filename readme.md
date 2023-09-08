@@ -4,7 +4,8 @@
 
 ### 2. ERD
 ---
-![Alt text](LV4-ERD.png)
+![Alt text](LV4-ERD-1.png)
+
 ---
 
 ### 3. LV4 진행 및 회고 정리 TIL

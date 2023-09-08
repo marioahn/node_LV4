@@ -19,7 +19,6 @@ router.put('/:postId/like', authMiddleware, async(req,res) => {
     const [plusLikes, minusLikes] = [post.likes+1, post.likes-1]
     
     // step1. 좋아요를 누르지 않은 상태라면? -> 추가하기
-    
     if (!aboutLike.includes(`${postId} `)) {
       const aboutLike2 = aboutLike + postId + ' ' // 공백으로 간 게시글id구분 -> '1 2 3 23 '
 
@@ -32,7 +31,7 @@ router.put('/:postId/like', authMiddleware, async(req,res) => {
     // step2. 좋아요를 누른 상태라면? -> 취소하기
     else {
       console.log(aboutLike)
-      const aboutLike2 = aboutLike.replaceAll(`${postId} `,'')
+      const aboutLike2 = aboutLike.replaceAll(`${postId} `,'') // postId+' '으로 찾기
       console.log(aboutLike2)
 
       await prisma.users.update({ data: { aboutLike: aboutLike2 }, where: { userId: userId }});
@@ -49,15 +48,18 @@ router.put('/:postId/like', authMiddleware, async(req,res) => {
 
 /** 2. 좋아요 게시글 조회 API */
   // 경로 그냥, 'like'만 하면, posts.router.js의 상세게시글 조회 api로 넘어감;;
-router.get('/tmp/like', authMiddleware, async(req,res) => {
+router.get('/like', authMiddleware, async(req,res) => {
   try {
     const { aboutLike } = req.user;
 
     // step1: 반복문 돌려서, 조건에 맞는것 + 필요한 필드만 골라서 arr에 추가
     const favoritePosts = []
-    for (let i=0; i<aboutLike.length; i++) { // '23' <- 2,3번 게시글 한번씩 누른 상태
+    console.log(aboutLike)
+    let arr = aboutLike.split(' ')
+    console.log(arr)
+    for (let i=0; i<arr.length-1; i++) { // ['20','21',''] -> arr.length-1
       const post = await prisma.posts.findUnique({
-        where: { postId: +aboutLike[i] },
+        where: { postId: +arr[i] },
         select: {
           postId: true,
           UserId: true,
@@ -77,7 +79,7 @@ router.get('/tmp/like', authMiddleware, async(req,res) => {
 
     return res.status(200).json({ posts: favoritePosts })
   } catch (err) {
-    console.log(err.name)
+    // console.log(err.name)
     return res.status(400).json({ errorMessage: '좋아요 게시글 조회에 실패하였습니다' });
   }
 });
