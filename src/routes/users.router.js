@@ -44,6 +44,8 @@ router.post('/login', async(req,res,next) => {
   try {
     const { nickname, password } = req.body;
 
+    // 생각해보니까, 굳이 user찾을 필요도 없이, if (!nick || !name)하면 되지않나
+      // 아, 에러가 '해당하는 유저가 존재치 않을 경우'여서 그럼. 에러메세지가 좀..
     const user = await prisma.users.findFirst({ where: { nickname, password } });
     if (!user) { return res.status(412).json({ errorMessage: '닉네임 또는 패스워드를 확인해주세요' }) };
 
